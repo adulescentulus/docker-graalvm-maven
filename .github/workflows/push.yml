@@ -1,0 +1,54 @@
+name: push
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ${GITHUB_REF} | grep -q refs/heads && echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/} || true
+          echo ${GITHUB_REF} | grep -q refs/tags && echo "MY_TAG=${GITHUB_REF#refs/tags/}" || true
+      - name: Fallback tag name
+        if: ${{ steps.branch_name.outputs.SOURCE_TAG == null }}
+        run: echo "MY_TAG=latest" >> $GITHUB_ENV
+      - name: debug branch_name
+        run: |
+          echo $SOURCE_NAME
+          echo $SOURCE_BRANCH
+          echo $MY_TAG
+        env:
+          SOURCE_NAME: ${{ steps.branch_name.outputs.SOURCE_NAME }}
+          SOURCE_BRANCH: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          cache-from: type=registry,ref=grolland/graalvm-maven:latest
+          cache-to: type=inline
+          context: .
+          platforms: linux/amd64
+          push: ${{ env.MY_TAG != 'latest' }}
+          tags: |
+            grolland/graalvm-maven:${{ env.MY_TAG }}
+            ghcr.io/adulescentulus/docker-graalvm-maven:${{ env.MY_TAG }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
