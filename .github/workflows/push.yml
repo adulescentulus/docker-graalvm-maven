@@ -15,7 +15,7 @@ jobs:
           echo ${GITHUB_REF} | grep -q refs/heads && echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/} || true
           echo ${GITHUB_REF} | grep -q refs/tags && echo "SOURCE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV || true
       - name: Fallback tag name
-        if: ${{ steps.branch_name.outputs.SOURCE_TAG == null }}
+        if: ${{ env.SOURCE_TAG == null }}
         run: echo "SOURCE_TAG=latest" >> $GITHUB_ENV
       - name: debug branch_name
         run: |
