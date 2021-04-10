@@ -52,7 +52,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: ${{ env.SOURCE_TAG != 'latest' }}
           tags: |
             grolland/graalvm-maven:${{ env.SOURCE_TAG }}
