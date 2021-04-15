@@ -56,7 +56,7 @@ jobs:
           push: ${{ env.SOURCE_TAG != 'latest' }}
           tags: |
             grolland/graalvm-maven:${{ env.SOURCE_TAG }}
-            ghcr.io/adulescentulus/docker-graalvm-maven:${{ env.SOURCE_TAG }}
+            ghcr.io/holygrolli/docker-graalvm-maven:${{ env.SOURCE_TAG }}
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
