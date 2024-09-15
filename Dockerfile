@@ -1,12 +1,10 @@
-FROM ghcr.io/graalvm/graalvm-ce:java11-21.0.0.2
+FROM container-registry.oracle.com/graalvm/native-image-community:17-ol8
 
 # For SDKMAN to work we need unzip & zip
-RUN microdnf install unzip zip
+RUN microdnf install unzip zip findutils
 
 RUN \
     # Install SDKMAN
     curl -s "https://get.sdkman.io" | bash; \
     source "$HOME/.sdkman/bin/sdkman-init.sh"; \
-    sdk install maven; \
-    # Install GraalVM Native Image
-    gu install native-image;
+    sdk install maven;
