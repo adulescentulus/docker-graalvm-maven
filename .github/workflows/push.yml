@@ -1,6 +1,11 @@
 name: push
 on: [push, pull_request]
 
+# permissions are needed if pushing to ghcr.io
+permissions: 
+  contents: read
+  packages: write
+  
 jobs:
   build:
     name: Build
