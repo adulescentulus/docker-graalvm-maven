@@ -7,7 +7,7 @@ RUN \
     # Install SDKMAN
     curl -s "https://get.sdkman.io" | bash; \
     source "$HOME/.sdkman/bin/sdkman-init.sh"; \
-    sdk install maven;
+    sdk install maven; \
     # install musl.cc
     curl -sSL https://more.musl.cc/10/x86_64-linux-musl/x86_64-linux-musl-native.tgz | tar -xz -C /usr/local; \
     export CC=/usr/local/x86_64-linux-musl-native/bin/gcc; \
