@@ -5,7 +5,7 @@ on: [push, pull_request]
 permissions: 
   contents: read
   packages: write
-  
+
 jobs:
   build:
     name: Build
@@ -39,11 +39,6 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -60,7 +55,6 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.SOURCE_TAG != 'latest' }}
           tags: |
-            grolland/graalvm-maven:${{ env.SOURCE_TAG }}
             ghcr.io/holygrolli/docker-graalvm-maven:${{ env.SOURCE_TAG }}
       - name: Move cache
         run: |
